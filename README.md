@@ -6,45 +6,33 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of sfi is to …
+The SFI R package provides tools to compute the Signal Fidelity Index
+(SFI), which quantifies diagnostic data quality at the patient level. It
+enables simulation of clinical data, calculation of SFI components, and
+evaluation of SFI-aware calibration methods to improve model performance
+across heterogeneous datasets without requiring outcome labels in target
+domains.
 
 ## Installation
 
 You can install the development version of sfi like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+install.packages("devtools")  # if not already installed
+#> Installing package into '/private/var/folders/tk/fzb3c9wj2zn6bztrz6kd_mxr0000gq/T/RtmpQDdxOg/temp_libpath227e2cc6acaa'
+#> (as 'lib' is unspecified)
+#> 
+#> The downloaded binary packages are in
+#>  /var/folders/tk/fzb3c9wj2zn6bztrz6kd_mxr0000gq/T//Rtmpq8cRSY/downloaded_packages
+devtools::install_github("clai-group/sfi")
+#> Downloading GitHub repo clai-group/sfi@HEAD
+#> ── R CMD build ─────────────────────────────────────────────────────────────────
+#> * checking for file ‘/private/var/folders/tk/fzb3c9wj2zn6bztrz6kd_mxr0000gq/T/Rtmpq8cRSY/remotes28691268517/clai-group-SFI-a3ba8ed/DESCRIPTION’ ... OK
+#> * preparing ‘sfi’:
+#> * checking DESCRIPTION meta-information ... OK
+#> * checking for LF line-endings in source and make files and shell scripts
+#> * checking for empty or unneeded directories
+#> * building ‘sfi_0.1.0.tar.gz’
+#> Installing package into '/private/var/folders/tk/fzb3c9wj2zn6bztrz6kd_mxr0000gq/T/RtmpQDdxOg/temp_libpath227e2cc6acaa'
+#> (as 'lib' is unspecified)
 ```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(sfi)
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
