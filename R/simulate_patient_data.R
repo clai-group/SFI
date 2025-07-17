@@ -10,7 +10,7 @@
 #' @param start_date Start date for encounters.
 #' @param end_date End date for encounters.
 #'
-#' @return 
+#' @return A data frame in long format
 #'
 #' @examples
 #' df_sim <- simulate_patient_data(

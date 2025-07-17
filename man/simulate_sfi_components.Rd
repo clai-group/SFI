@@ -19,6 +19,9 @@ simulate_sfi_components(df_long)
 \item \code{age}
 }}
 }
+\value{
+A data frame in wide format
+}
 \description{
 Computes six components of the SFI (Specificity, Temporal Consistency, Entropy,
 Contextual Concordance, Medication Alignment, Trajectory Stability) from a

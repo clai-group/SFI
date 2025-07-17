@@ -26,6 +26,9 @@ simulate_patient_data(
 
 \item{end_date}{End date for encounters.}
 }
+\value{
+A data frame in long format
+}
 \description{
 Generates synthetic patient-level longitudinal data with realistic distributions
 of demographics, diagnoses, and medications for dementia-related research.

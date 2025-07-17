@@ -16,7 +16,7 @@
 #'     \item \code{age}
 #'   }
 #'
-#' @return 
+#' @return A data frame in wide format
 #'
 #' @examples
 #' # Example with simulated data
