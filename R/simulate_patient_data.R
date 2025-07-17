@@ -159,10 +159,3 @@ simulate_patient_data <- function(n,
   return(all_data)
 }
 
-# Example usage:
-# df_sim <- simulate_patient_data(
-#   n = 1000,
-#   mean_age = 68,
-#   race_probs = c(White = 0.4, Black = 0.3, Hispanic = 0.2, Asian = 0.05, Other = 0.05),
-#   dementia_rate = 0.3
-# )

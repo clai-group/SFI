@@ -6,6 +6,7 @@
 #' @param prob_col Name of predicted probability column
 #' @param weights Optional named vector of SFI component weights
 #' @return A data.frame with 'SFI' and 'calibrated_prob' columns added
+#' @export
 
 sfi_calibration_pipeline <- function(df, sfi_reference, alpha = 1.0, prob_col = "predicted_prob", weights = NULL) {
   df <- compute_composite_sfi(df, component_weights = weights)
