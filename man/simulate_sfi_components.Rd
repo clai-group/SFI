@@ -4,7 +4,7 @@
 \alias{simulate_sfi_components}
 \title{Simulate SFI Components for Patients}
 \usage{
-simulate_sfi_components(df_long)
+simulate_sfi_components(df_long, high_fidelity_codes, specific_medications)
 }
 \arguments{
 \item{df_long}{A long-format data frame with at least these columns:
@@ -18,20 +18,44 @@ simulate_sfi_components(df_long)
 \item \code{race} (optional)
 \item \code{age}
 }}
+
+\item{high_fidelity_codes}{Character vector of high-fidelity diagnosis codes}
+
+\item{specific_medications}{Character vector of phenotype-specific medications for alignment calculation}
 }
 \value{
-A data frame in wide format
+A data frame in wide format with SFI components
 }
 \description{
 Computes six components of the SFI (Specificity, Temporal Consistency, Entropy,
 Contextual Concordance, Medication Alignment, Trajectory Stability) from a
 longitudinal patient dataset.
 }
+\details{
+FIXED: Now uses dynamic high_fidelity_codes and dementia_specific_medications
+passed from the parameter file instead of hardcoded values.
+}
 \examples{
-# Example with simulated data
-df_long <- simulate_patient_data(n = 1000, mean_age = 60, dementia_rate = 0.3)
+# Load parameters
+source("dementia_parameters.R")
 
-df_sfi <- simulate_sfi_components(df_long)
+# Example with simulated data
+df_long <- simulate_patient_data(n = 1000, mean_age = 60, 
+                                 phenotype_prevalence = 0.3,
+                                 low_fidelity_codes = low_fidelity_codes,
+                                 high_fidelity_codes = high_fidelity_codes,
+                                 medications = medications,
+                                 medication_probs_positive = medication_probs_positive,
+                                 medication_probs_negative = medication_probs_negative,
+                                 age_effect_threshold = age_threshold,
+                                 age_effect_lowerrisk = age_lower_risk,
+                                 race_multiplier = race_multiplier,
+                                 inpatient_prob_positive = inpatient_prob_positive,
+                                 inpatient_prob_negative = inpatient_prob_negative)
+
+df_sfi <- simulate_sfi_components(df_long, 
+                                  high_fidelity_codes = high_fidelity_codes,
+                                  specific_medications = dementia_specific_medications)
 head(df_sfi)
 
 }

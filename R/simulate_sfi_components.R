@@ -4,6 +4,9 @@
 #' Contextual Concordance, Medication Alignment, Trajectory Stability) from a
 #' longitudinal patient dataset.
 #'
+#' FIXED: Now uses dynamic high_fidelity_codes and dementia_specific_medications
+#' passed from the parameter file instead of hardcoded values.
+#'
 #' @param df_long A long-format data frame with at least these columns:
 #'   \itemize{
 #'     \item \code{patient_id}
@@ -15,18 +18,38 @@
 #'     \item \code{race} (optional)
 #'     \item \code{age}
 #'   }
+#' @param high_fidelity_codes Character vector of high-fidelity diagnosis codes
+#' @param specific_medications Character vector of phenotype-specific medications for alignment calculation
 #'
-#' @return A data frame in wide format
+#' @return A data frame in wide format with SFI components
 #'
 #' @examples
+#' # Load parameters
+#' source("dementia_parameters.R")
+#' 
 #' # Example with simulated data
-#' df_long <- simulate_patient_data(n = 1000, mean_age = 60, dementia_rate = 0.3)
+#' df_long <- simulate_patient_data(n = 1000, mean_age = 60, 
+#'                                  phenotype_prevalence = 0.3,
+#'                                  low_fidelity_codes = low_fidelity_codes,
+#'                                  high_fidelity_codes = high_fidelity_codes,
+#'                                  medications = medications,
+#'                                  medication_probs_positive = medication_probs_positive,
+#'                                  medication_probs_negative = medication_probs_negative,
+#'                                  age_effect_threshold = age_threshold,
+#'                                  age_effect_lowerrisk = age_lower_risk,
+#'                                  race_multiplier = race_multiplier,
+#'                                  inpatient_prob_positive = inpatient_prob_positive,
+#'                                  inpatient_prob_negative = inpatient_prob_negative)
 #'
-#' df_sfi <- simulate_sfi_components(df_long)
+#' df_sfi <- simulate_sfi_components(df_long, 
+#'                                   high_fidelity_codes = high_fidelity_codes,
+#'                                   specific_medications = dementia_specific_medications)
 #' head(df_sfi)
 #'
 #' @export
-simulate_sfi_components <- function(df_long) {
+simulate_sfi_components <- function(df_long, 
+                                    high_fidelity_codes, 
+                                    specific_medications) {
   library(dplyr)
   
   df_sfi <- df_long %>%
@@ -37,10 +60,8 @@ simulate_sfi_components <- function(df_long) {
       age = last(age),
       
       # Specificity: fraction of highly specific codes
-      specificity = mean(diagnosis_code %in% c("G30.0" , "G30.1" , "G30.8" , "G30.9" , "F01.50" ,"F01.51" ,"F02.80" ,"F02.81" ,"F03.90" ,"F03.91" ,"G31.1" , "G31.83")),###these are the specific code
-     
-      
-      
+      # FIXED: Now uses dynamic high_fidelity_codes instead of hardcoded list
+      specificity = mean(diagnosis_code %in% high_fidelity_codes),
       
       # Temporal Consistency: less frequent diagnosis switching
       temporal_consistency = {
@@ -62,14 +83,29 @@ simulate_sfi_components <- function(df_long) {
       },
       
       # Contextual Concordance: match between diagnosis and setting
+      # FIXED: Now uses dynamic high_fidelity_codes
       contextual_concordance = mean(ifelse(
-        setting == "inpatient" & diagnosis_code %in% c("G30.0" , "G30.1" , "G30.8" , "G30.9" , "F01.50" ,"F01.51" ,"F02.80" ,"F02.81" ,"F03.90" ,"F03.91" ,"G31.1" , "G31.83"), 1,
-        ifelse(setting == "outpatient" & diagnosis_code %in% c("G30.0" , "G30.1" , "G30.8" , "G30.9" , "F01.50" ,"F01.51" ,"F02.80" ,"F02.81" ,"F03.90" ,"F03.91" ,"G31.1" , "G31.83"), 0.5, 0)
+        setting == "inpatient" & diagnosis_code %in% high_fidelity_codes, 1,
+        ifelse(setting == "outpatient" & diagnosis_code %in% high_fidelity_codes, 0.5, 0)
       )),
       
-      # Medication Alignment: dementia-specific drug use when diagnosed
-      medication_alignment = mean(diagnosis_code %in% c("G30.0" , "G30.1" , "G30.8" , "G30.9" , "F01.50" ,"F01.51" ,"F02.80" ,"F02.81" ,"F03.90" ,"F03.91" ,"G31.1" , "G31.83") &
-                                    medication %in% c("donepezil", "memantine", "rivastigmine", "galantamine")),
+      # Medication Alignment: phenotype-specific drug use when diagnosed
+      # FIXED: Now uses dynamic specific_medications and checks against high_fidelity_codes
+      # Need to handle semicolon-separated medication strings
+      medication_alignment = {
+        # Get all medications for this patient
+        all_meds <- unique(unlist(strsplit(medication, ";")))
+        all_meds <- all_meds[all_meds != "none"]
+        
+        # Check if patient has any specific medications
+        has_specific_med <- any(all_meds %in% specific_medications)
+        
+        # Check if patient has high-fidelity diagnosis
+        has_high_fidelity_dx <- any(diagnosis_code %in% high_fidelity_codes)
+        
+        # Both conditions must be true for high alignment
+        as.numeric(has_specific_med & has_high_fidelity_dx)
+      },
       
       # Trajectory Stability: consistent primary diagnosis across settings
       trajectory_stability = {
@@ -89,4 +125,3 @@ simulate_sfi_components <- function(df_long) {
   
   return(df_sfi)
 }
-
